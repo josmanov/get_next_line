@@ -6,7 +6,7 @@
 /*   By: josmanov <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 12:44:28 by josmanov          #+#    #+#             */
-/*   Updated: 2024/07/29 01:30:22 by josmanov         ###   ########.fr       */
+/*   Updated: 2024/08/01 17:46:15 by josmanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line.h"
@@ -49,12 +49,11 @@ char	*get_line(t_list *list)
 		return (NULL);
 	str_cpy(list, next_str);
 	return (next_str);
-
 }
 
-void 	append(t_list **list, char *buf)
+void	append(t_list **list, char *buf)
 {
-	t_list 	*new_node;
+	t_list	*new_node;
 	t_list	*last_node;
 
 	last_node = ft_lstlast(*list);
@@ -69,32 +68,12 @@ void 	append(t_list **list, char *buf)
 	new_node->next = NULL;
 }
 
-int	is_newline(t_list *list)
-{
-	int	i;
-
-	if (NULL == list)
-		return (0);
-	while (list)
-	{
-		i = 0;
-		if (list->str_buf[i] && i < BUFFER_SIZE)
-		{
-			if (list->str_buf[i] == '\n')
-				return (1);
-			++i;
-		}
-		list = list->next;
-	}
-	return (0);
-}
-
 void	create_list(t_list **list, int fd)
 {
 	int		char_read;
 	char	*buf;
 
-	while(!is_newline(*list))
+	while (!is_newline(*list))
 	{
 		buf = malloc(BUFFER_SIZE + 1);
 		if (NULL == buf)
@@ -112,10 +91,10 @@ void	create_list(t_list **list, int fd)
 
 char	*get_next_line(int fd)
 {
-	static t_list 	*list = NULL;
+	static t_list	*list = NULL;
 	char			*next_line;
 
-	if (fd < 0 ||  BUFFER_SIZE <= 0 || read(fd, &next_line, 0) < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, &next_line, 0) < 0)
 		return (NULL);
 	create_list(&list, fd);
 	if (list == NULL)
