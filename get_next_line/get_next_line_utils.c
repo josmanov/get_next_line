@@ -6,17 +6,15 @@
 /*   By: josmanov <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 12:44:28 by josmanov          #+#    #+#             */
-/*   Updated: 2024/08/01 17:49:19 by josmanov         ###   ########.fr       */
+/*   Updated: 2024/09/26 09:57:23 by josmanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line.h"
 
-void	ft_dealloc(t_list **list, t_list *clean_node, char *buf)
+void	ft_dealloc(t_list **list, t_list *clean_node)
 {
 	t_list	*tmp;
 
-	if (NULL == *list)
-		return ;
 	while (*list)
 	{
 		tmp = (*list)->next;
@@ -24,21 +22,21 @@ void	ft_dealloc(t_list **list, t_list *clean_node, char *buf)
 		free(*list);
 		*list = tmp;
 	}
-	*list = NULL;
-	if (clean_node->str_buf[0])
+	if (clean_node && clean_node->str_buf && clean_node->str_buf[0] != '\0')
+	{
 		*list = clean_node;
+		(*list)->next = NULL;
+	}
 	else
 	{
-		free(buf);
+		free(clean_node->str_buf);
 		free(clean_node);
 	}
 }
 
 t_list	*ft_lstlast(t_list *lst)
 {
-	if (NULL == lst)
-		return (NULL);
-	while (lst->next)
+	while (lst && lst->next)
 		lst = lst->next;
 	return (lst);
 }
@@ -48,21 +46,18 @@ void	str_cpy(t_list *list, char *str)
 	int		i;
 	int		j;
 
-	if (NULL == list)
-		return ;
 	j = 0;
 	while (list)
 	{
 		i = 0;
 		while (list->str_buf[i])
 		{
-			if (list->str_buf[i] == '\n')
+			str[j++] = list->str_buf[i++];
+			if (list->str_buf[i - 1] == '\n')
 			{
-				str[j++] = '\n';
 				str[j] = '\0';
 				return ;
 			}
-			str[j++] = list->str_buf[i++];
 		}
 		list = list->next;
 	}
@@ -74,8 +69,6 @@ int	len_to_newline(t_list *list)
 	int		i;
 	int		len;
 
-	if (NULL == list)
-		return (0);
 	len = 0;
 	while (list)
 	{
@@ -84,11 +77,11 @@ int	len_to_newline(t_list *list)
 		{
 			if (list->str_buf[i] == '\n')
 			{
-				++len;
+				len++;
 				return (len);
 			}
-			++i;
-			++len;
+			i++;
+			len++;
 		}
 		list = list->next;
 	}
@@ -99,16 +92,14 @@ int	is_newline(t_list *list)
 {
 	int		i;
 
-	if (NULL == list)
-		return (0);
 	while (list)
 	{
 		i = 0;
-		while (list->str_buf[i] && i < BUFFER_SIZE)
+		while (list->str_buf[i])
 		{
 			if (list->str_buf[i] == '\n')
 				return (1);
-			++i;
+			i++;
 		}
 		list = list->next;
 	}
