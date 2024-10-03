@@ -6,42 +6,42 @@
 /*   By: josmanov <josmanov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 12:44:28 by josmanov          #+#    #+#             */
-/*   Updated: 2024/10/02 12:57:13 by josmanov         ###   ########.fr       */
+/*   Updated: 2024/10/03 19:22:07 by josmanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line.h"
 
-void	clean_list(t_list **list)
+void	clean_list(t_list **lst)
 {
 	t_list	*last_node;
 	t_list	*clean_node;
 	int		i;
 	int		j;
-	char	*buffer;
+	char	*remaining_buf;
 
-	if (!list || !*list)
+	if (!lst || !*lst)
 		return ;
-	last_node = ft_lstlast(*list);
-	buffer = malloc(BUFFER_SIZE + 1);
-	if (buffer == NULL)
+	last_node = ft_lstlast(*lst);
+	remaining_buf = malloc(BUFFER_SIZE + 1);
+	if (remaining_buf == NULL)
 		return ;
 	clean_node = malloc(sizeof(t_list));
-	if (buffer == NULL || clean_node == NULL)
+	if (remaining_buf == NULL || clean_node == NULL)
 	{
-		free(buffer);
+		free(remaining_buf);
 		return ;
 	}
 	i = len_to_newline(last_node);
 	j = 0;
 	while ((last_node->str_buf[i]))
-		buffer[j++] = last_node->str_buf[i++];
-	buffer[j] = '\0';
-	clean_node->str_buf = buffer;
-	ft_dealloc(list, clean_node);
+		remaining_buf[j++] = last_node->str_buf[i++];
+	remaining_buf[j] = '\0';
+	clean_node->str_buf = remaining_buf;
+	ft_dealloc(lst, clean_node);
 }
 
 // Ends buffered line 
-void	append(t_list **list, char *buf)
+void	append_node(t_list **lst, char *sub_string)
 {
 	t_list	*new_node;
 	t_list	*last_node;
@@ -49,64 +49,64 @@ void	append(t_list **list, char *buf)
 	new_node = malloc(sizeof(t_list));
 	if (new_node == NULL)
 	{
-		free(buf);
+		free(sub_string);
 		return ;
 	}
-	new_node->str_buf = buf;
+	new_node->str_buf = sub_string;
 	if (new_node->str_buf == NULL)
 	{
 		free(new_node);
 		return ;
 	}
 	new_node->next = NULL;
-	last_node = ft_lstlast(*list);
+	last_node = ft_lstlast(*lst);
 	if (last_node == NULL)
-		*list = new_node;
+		*lst = new_node;
 	else
 		last_node->next = new_node;
 }
 
 // Creates a new list
-void	create_list(t_list **list, int fd)
+void	create_list(t_list **lst, int fd)
 {
-	int		char_read;
-	char	*buffer;
+	int		bytes_read;
+	char	*buf;
 
-	while (!is_newline(*list))
+	while (!is_newline(*lst))
 	{
-		buffer = malloc(BUFFER_SIZE + 1);
-		if (buffer == NULL)
+		buf = malloc(BUFFER_SIZE + 1);
+		if (buf == NULL)
 			return ;
-		char_read = read(fd, buffer, BUFFER_SIZE);
-		if (char_read <= 0)
+		bytes_read = read(fd, buf, BUFFER_SIZE);
+		if (bytes_read <= 0)
 		{
-			free(buffer);
+			free(buf);
 			return ;
 		}
-		buffer[char_read] = '\0';
-		append(list, buffer);
+		buf[bytes_read] = '\0';
+		append_node(lst, buf);
 	}
 }
 
 // Fetches a new line from a linked list
 char	*get_next_line(int fd)
 {
-	static t_list	*list = NULL;
+	static t_list	*lst = NULL;
 	char			*next_line;
-	int				str_len;
+	int				line_len;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	create_list(&list, fd);
-	if (list == NULL)
+	create_list(&lst, fd);
+	if (lst == NULL)
 		return (NULL);
-	str_len = len_to_newline(list);
-	if (str_len <= 0)
+	line_len = len_to_newline(lst);
+	if (line_len <= 0)
 		return (NULL);
-	next_line = malloc(str_len + 1);
+	next_line = malloc(line_len + 1);
 	if (next_line == NULL)
 		return (NULL);
-	str_cpy(list, next_line);
-	clean_list(&list);
+	str_cpy(lst, next_line);
+	clean_list(&lst);
 	return (next_line);
 }

@@ -3,29 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josmanov <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: josmanov <josmanov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 12:44:28 by josmanov          #+#    #+#             */
-/*   Updated: 2024/09/26 09:57:23 by josmanov         ###   ########.fr       */
+/*   Updated: 2024/10/03 19:26:46 by josmanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line.h"
 
-void	ft_dealloc(t_list **list, t_list *clean_node)
+void	ft_dealloc(t_list **lst, t_list *clean_node)
 {
 	t_list	*tmp;
 
-	while (*list)
+	while (*lst)
 	{
-		tmp = (*list)->next;
-		free((*list)->str_buf);
-		free(*list);
-		*list = tmp;
+		tmp = (*lst)->next;
+		free((*lst)->str_buf);
+		free(*lst);
+		*lst = tmp;
 	}
 	if (clean_node && clean_node->str_buf && clean_node->str_buf[0] != '\0')
 	{
-		*list = clean_node;
-		(*list)->next = NULL;
+		*lst = clean_node;
+		(*lst)->next = NULL;
 	}
 	else
 	{
@@ -41,41 +41,41 @@ t_list	*ft_lstlast(t_list *lst)
 	return (lst);
 }
 
-void	str_cpy(t_list *list, char *str)
+void	str_cpy(t_list *lst, char *str)
 {
 	int		i;
 	int		j;
 
 	j = 0;
-	while (list)
+	while (lst)
 	{
 		i = 0;
-		while (list->str_buf[i])
+		while (lst->str_buf[i])
 		{
-			str[j++] = list->str_buf[i++];
-			if (list->str_buf[i - 1] == '\n')
+			str[j++] = lst->str_buf[i++];
+			if (lst->str_buf[i - 1] == '\n')
 			{
 				str[j] = '\0';
 				return ;
 			}
 		}
-		list = list->next;
+		lst = lst->next;
 	}
 	str[j] = '\0';
 }
 
-int	len_to_newline(t_list *list)
+int	len_to_newline(t_list *lst)
 {
 	int		i;
 	int		len;
 
 	len = 0;
-	while (list)
+	while (lst)
 	{
 		i = 0;
-		while (list->str_buf[i])
+		while (lst->str_buf[i])
 		{
-			if (list->str_buf[i] == '\n')
+			if (lst->str_buf[i] == '\n')
 			{
 				len++;
 				return (len);
@@ -83,25 +83,25 @@ int	len_to_newline(t_list *list)
 			i++;
 			len++;
 		}
-		list = list->next;
+		lst = lst->next;
 	}
 	return (len);
 }
 
-int	is_newline(t_list *list)
+int	is_newline(t_list *lst)
 {
 	int		i;
 
-	while (list)
+	while (lst)
 	{
 		i = 0;
-		while (list->str_buf[i])
+		while (lst->str_buf[i])
 		{
-			if (list->str_buf[i] == '\n')
+			if (lst->str_buf[i] == '\n')
 				return (1);
 			i++;
 		}
-		list = list->next;
+		lst = lst->next;
 	}
 	return (0);
 }

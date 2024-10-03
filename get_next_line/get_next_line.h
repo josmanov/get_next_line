@@ -6,7 +6,7 @@
 /*   By: josmanov <josmanov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 12:44:35 by josmanov          #+#    #+#             */
-/*   Updated: 2024/09/26 09:54:41 by josmanov         ###   ########.fr       */
+/*   Updated: 2024/10/03 19:22:35 by josmanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #ifndef GET_NEXT_LINE_H
@@ -27,13 +27,13 @@ typedef struct s_list
 }						t_list;
 
 char	*get_next_line(int fd);
-void	create_list(t_list **list, int fd);
-int		is_newline(t_list *list);
-void	append(t_list **list, char *buf);
-void	clean_list(t_list **list);
-int		len_to_newline(t_list *list);
-void	str_cpy(t_list *list, char *str);
+void	create_list(t_list **lst, int fd);
+int		is_newline(t_list *lst);
+void	append_node(t_list **lst, char *buf);
+void	clean_list(t_list **lst);
+int		len_to_newline(t_list *lst);
+void	str_cpy(t_list *lst, char *str);
 t_list	*ft_lstlast(t_list *lst);
-void	ft_dealloc(t_list **list, t_list *clean_node);
+void	ft_dealloc(t_list **lst, t_list *clean_node);
 
 #endif
